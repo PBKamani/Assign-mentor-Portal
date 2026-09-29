@@ -112,12 +112,12 @@ export const UserDashboard = () => {
                     {subject.name}
                   </h3>
                   <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-                    {subject.description || 'Comprehensive curriculum units and assignments.'}
+                    {subject.description || 'Comprehensive curriculum coursework and assignments.'}
                   </p>
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', color: 'var(--accent)', fontWeight: 700, fontSize: '0.85rem', marginTop: '1.25rem' }}>
-                  <span>Explore Units</span>
+                  <span>Explore Assignments</span>
                   <ArrowRight size={16} />
                 </div>
               </div>

@@ -13,9 +13,11 @@ serviceAccountKey.json
 firebase-adminsdk*.json
 credentials.json
 
-# Build outputs
+# Build & Local Storage outputs
 dist/
 build/
+uploads/
+backend/uploads/
 *.egg-info/
 
 # IDE & OS

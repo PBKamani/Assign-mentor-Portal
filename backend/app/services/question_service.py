@@ -61,7 +61,7 @@ class QuestionService:
             return None
 
         existing_data = existing_doc.to_dict()
-        update_payload = {k: v for k, v in data.model_dump().items() if v is not None}
+        update_payload = data.model_dump(exclude_unset=True)
         update_payload["updatedAt"] = datetime.datetime.now(datetime.timezone.utc).isoformat()
 
         # Clean up old diagrams if replaced
