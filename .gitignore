@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+
+# Environment & Credentials (NEVER COMMIT)
+.env
+*.env.local
+serviceAccountKey.json
+firebase-adminsdk*.json
+credentials.json
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.log

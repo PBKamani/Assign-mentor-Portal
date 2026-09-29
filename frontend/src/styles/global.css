@@ -1,0 +1,147 @@
+@import './theme.css';
+@import './neomorphism.css';
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color var(--transition-normal), color var(--transition-normal);
+  overflow-x: hidden;
+}
+
+/* Custom Neomorphic Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-light);
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--accent-hover);
+}
+
+/* Typography for Answer Prose / TipTap Rendered Content */
+.prose {
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  line-height: 1.75;
+}
+
+.prose p {
+  margin-bottom: 1rem;
+}
+
+.prose h1, .prose h2, .prose h3, .prose h4 {
+  color: var(--text-primary);
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  font-weight: 700;
+}
+
+.prose ul, .prose ol {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.prose li {
+  margin-bottom: 0.4rem;
+}
+
+.prose blockquote {
+  border-left: 4px solid var(--accent);
+  padding-left: 1rem;
+  margin: 1rem 0;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.prose code {
+  font-family: var(--font-mono);
+  background: rgba(138, 121, 93, 0.15);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.prose pre {
+  background: var(--surface-elevated);
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--neo-pressed);
+  overflow-x: auto;
+  margin: 1rem 0;
+}
+
+.prose pre code {
+  background: transparent;
+  padding: 0;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+}
+
+.prose th, .prose td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: var(--border-subtle);
+}
+
+.prose th {
+  background: var(--accent-light);
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* Layout Utilities */
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.justify-center { justify-content: center; }
+.gap-2 { gap: 0.5rem; }
+.gap-4 { gap: 1rem; }
+.gap-6 { gap: 1.5rem; }
+
+/* TipTap Editor Styles */
+.tiptap-editor .ProseMirror {
+  min-height: 180px;
+  outline: none;
+}

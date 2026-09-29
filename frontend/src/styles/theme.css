@@ -1,0 +1,65 @@
+/* Theme Variables for Assignmentor */
+:root {
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+}
+
+/* Cream Light Theme (Specification 41) */
+[data-theme="light"], :root {
+  --bg-color: #F3EFE6;
+  --surface-color: #F3EFE6;
+  --surface-elevated: #F9F6F0;
+  --text-primary: #202020;
+  --text-secondary: #6B6B6B;
+  --text-muted: #8F8F8F;
+  --accent: #8A795D;
+  --accent-hover: #75654C;
+  --accent-light: #E8E0D2;
+  --accent-text: #FFFFFF;
+  --danger: #D9534F;
+  --danger-light: #FDF2F2;
+  --success: #4E9A51;
+
+  /* Neomorphic Shadows */
+  --shadow-light: #FFFFFF;
+  --shadow-dark: #D4CEBF;
+  --neo-flat: 6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light);
+  --neo-pressed: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+  --neo-card: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light);
+  --neo-card-sm: 4px 4px 10px var(--shadow-dark), -4px -4px 10px var(--shadow-light);
+  --neo-subtle: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+  --border-subtle: 1px solid rgba(138, 121, 93, 0.12);
+}
+
+/* Dark Blue Dark Theme (Specification 42) */
+[data-theme="dark"] {
+  --bg-color: #101827;
+  --surface-color: #101827;
+  --surface-elevated: #162032;
+  --text-primary: #E8EDF5;
+  --text-secondary: #9AA6B8;
+  --text-muted: #64748B;
+  --accent: #6D8DB8;
+  --accent-hover: #5A7AA4;
+  --accent-light: #1E2D42;
+  --accent-text: #FFFFFF;
+  --danger: #EF4444;
+  --danger-light: #2A1719;
+  --success: #10B981;
+
+  /* Neomorphic Shadows */
+  --shadow-light: #19253C;
+  --shadow-dark: #0A0F1A;
+  --neo-flat: 6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light);
+  --neo-pressed: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+  --neo-card: 8px 8px 18px var(--shadow-dark), -8px -8px 18px var(--shadow-light);
+  --neo-card-sm: 4px 4px 10px var(--shadow-dark), -4px -4px 10px var(--shadow-light);
+  --neo-subtle: 3px 3px 6px var(--shadow-dark), -3px -3px 6px var(--shadow-light);
+  --border-subtle: 1px solid rgba(109, 141, 184, 0.15);
+}
