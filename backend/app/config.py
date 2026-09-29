@@ -14,9 +14,11 @@ class Settings(BaseSettings):
     FIREBASE_CLIENT_EMAIL: Optional[str] = None
     FIREBASE_PRIVATE_KEY: Optional[str] = None
     FIREBASE_STORAGE_BUCKET: Optional[str] = None
+    FIREBASE_WEB_API_KEY: Optional[str] = None
 
     class Config:
         env_file = ".env"
         extra = "ignore"
 
 settings = Settings()
+

@@ -64,7 +64,9 @@ class StorageService:
                 blob.make_public()
                 return blob.public_url
             except Exception:
-                return f"https://storage.googleapis.com/{bucket.name}/{blob_path}"
+                import urllib.parse
+                encoded = urllib.parse.quote(blob_path, safe='')
+                return f"https://firebasestorage.googleapis.com/v0/b/{bucket.name}/o/{encoded}?alt=media"
 
     @classmethod
     def delete_by_url(cls, image_url: Optional[str]):
@@ -73,8 +75,12 @@ class StorageService:
 
         try:
             bucket = get_storage_bucket()
+            import urllib.parse
             if "/api/upload/static/" in image_url:
                 blob_path = image_url.split("/api/upload/static/")[1]
+            elif "/o/" in image_url:
+                encoded = image_url.split("/o/")[1].split("?")[0]
+                blob_path = urllib.parse.unquote(encoded)
             elif "googleapis.com" in image_url:
                 parts = image_url.split("/")
                 blob_path = "/".join(parts[parts.index(bucket.name) + 1:]) if bucket.name in parts else parts[-1]

@@ -62,14 +62,11 @@ class SubjectService:
         if not doc_ref.get().exists:
             return False
 
-        # Cascade delete child assignments and their questions (Subject -> Assignment -> Question)
-        assignments = db.collection("assignments").where("subjectId", "==", subject_id).stream()
+        # Cascade delete child assignments (which cleans up questions and diagrams)
+        from app.services.assignment_service import assignment_service
+        assignments = assignment_service.get_all(subject_id=subject_id)
         for a in assignments:
-            assign_id = a.id
-            questions = db.collection("questions").where("assignmentId", "==", assign_id).stream()
-            for q in questions:
-                db.collection("questions").document(q.id).delete()
-            db.collection("assignments").document(assign_id).delete()
+            assignment_service.delete(a["id"])
 
         doc_ref.delete()
         return True

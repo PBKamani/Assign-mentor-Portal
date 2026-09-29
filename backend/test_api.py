@@ -71,24 +71,55 @@ def run_tests():
     assert "units" not in stats
     print(f"[PASS] Stats API (Unit-Free): OK {stats}")
 
-    # 7. Academic Hierarchy: Subject -> Assignment -> Question (Read-only as user)
+    # 7. Admin CRUD & Academic Hierarchy: Subject -> Assignment -> Question -> Answer
+    new_sub = client.post(
+        "/api/subjects",
+        json={"name": "Machine Learning", "description": "Study of ML algorithms", "order": 1},
+        headers={"Authorization": f"Bearer {admin_token}"}
+    )
+    assert new_sub.status_code == 201
+    created_sub_id = new_sub.json()["data"]["id"]
+
+    new_assign = client.post(
+        "/api/assignments",
+        json={"subjectId": created_sub_id, "name": "Assignment 1", "assignmentNumber": 1, "description": "Supervised Learning", "order": 1},
+        headers={"Authorization": f"Bearer {admin_token}"}
+    )
+    assert new_assign.status_code == 201
+    created_assign_id = new_assign.json()["data"]["id"]
+
+    new_q = client.post(
+        "/api/questions",
+        json={
+            "subjectId": created_sub_id,
+            "assignmentId": created_assign_id,
+            "questionNumber": 1,
+            "questionText": "Explain Supervised Learning with examples.",
+            "answer": "<p>Supervised learning involves training a model on labeled data.</p>",
+            "questionDiagramUrl": "assignmentor/question-diagrams/mock/diagram_q.png",
+            "answerDiagramUrl": "assignmentor/answer-diagrams/mock/diagram_a.png",
+            "order": 1
+        },
+        headers={"Authorization": f"Bearer {admin_token}"}
+    )
+    assert new_q.status_code == 201
+    created_q_id = new_q.json()["data"]["id"]
+    print("[PASS] Admin Hierarchy Creation (Subject -> Assignment -> Question): OK")
+
+    # 8. User Read-Only Verification
     subj_res = client.get("/api/subjects", headers={"Authorization": f"Bearer {user_token}"})
     assert subj_res.status_code == 200
     subjects = subj_res.json()["data"]
     assert len(subjects) > 0
-    sub_id = subjects[0]["id"]
-    print(f"[PASS] Subjects GET: Found {len(subjects)} subjects")
+    print(f"[PASS] Subjects GET (User): Found {len(subjects)} subjects")
 
-    # Verify assignments directly under subject (/api/subjects/{id}/assignments)
-    sub_assigns_res = client.get(f"/api/subjects/{sub_id}/assignments", headers={"Authorization": f"Bearer {user_token}"})
+    sub_assigns_res = client.get(f"/api/subjects/{created_sub_id}/assignments", headers={"Authorization": f"Bearer {user_token}"})
     assert sub_assigns_res.status_code == 200
     sub_assigns = sub_assigns_res.json()["data"]
     assert len(sub_assigns) > 0
-    assign_id = sub_assigns[0]["id"]
-    print(f"[PASS] Subject Assignments GET: Found {len(sub_assigns)} assignments directly under subject {sub_id}")
+    print(f"[PASS] Subject Assignments GET (User): Found {len(sub_assigns)} assignments directly under subject")
 
-    # Verify questions directly under assignment
-    questions_res = client.get(f"/api/assignments/{assign_id}/questions", headers={"Authorization": f"Bearer {user_token}"})
+    questions_res = client.get(f"/api/assignments/{created_assign_id}/questions", headers={"Authorization": f"Bearer {user_token}"})
     assert questions_res.status_code == 200
     questions = questions_res.json()["data"]
     assert len(questions) > 0
@@ -96,9 +127,9 @@ def run_tests():
     assert "unitId" not in first_q
     assert "questionDiagramUrl" in first_q
     assert "answerDiagramUrl" in first_q
-    print(f"[PASS] Questions GET: Found {len(questions)} questions (Outside/Inside Diagram URLs verified, no unitId)")
+    print("[PASS] Questions GET (User): Found questions (Outside/Inside Diagram URLs verified, no unitId)")
 
-    # 8. RBAC Security: User blocked with HTTP 403 on mutations
+    # 9. RBAC Security: User blocked with HTTP 403 on mutations
     unauthorized_create = client.post(
         "/api/subjects",
         json={"name": "Forbidden Subject", "description": "Should fail", "order": 99},
@@ -107,45 +138,26 @@ def run_tests():
     assert unauthorized_create.status_code == 403
     print("[PASS] RBAC Security: User blocked with HTTP 403 Forbidden on write: OK")
 
-    # 9. Admin CRUD: Create, Update, Delete Subject (cascade to assignments & questions)
-    new_sub = client.post(
-        "/api/subjects",
-        json={"name": "Test Subject for CRUD", "description": "Temporary subject", "order": 10},
-        headers={"Authorization": f"Bearer {admin_token}"}
-    )
-    assert new_sub.status_code == 201
-    created_sub_id = new_sub.json()["data"]["id"]
+    # 10. Search API (Hierarchy: Subject -> Assignment -> Question)
+    search_res = client.get("/api/search?q=Supervised", headers={"Authorization": f"Bearer {user_token}"})
+    assert search_res.status_code == 200
+    results = search_res.json()["data"]
+    assert len(results) > 0
+    for item in results:
+        assert "unit" not in item
+        assert "unitId" not in item
+    print(f"[PASS] Search API: Found {len(results)} hierarchical results without units")
 
-    new_assign = client.post(
-        "/api/assignments",
-        json={"subjectId": created_sub_id, "name": "Test Assignment", "assignmentNumber": 1, "description": "Temp"},
-        headers={"Authorization": f"Bearer {admin_token}"}
-    )
-    assert new_assign.status_code == 201
-    created_assign_id = new_assign.json()["data"]["id"]
-
-    # Delete subject should cascade delete the test assignment
+    # 11. Cascade Delete: Delete subject removes child assignment and question
     del_sub = client.delete(
         f"/api/subjects/{created_sub_id}",
         headers={"Authorization": f"Bearer {admin_token}"}
     )
     assert del_sub.status_code == 200
+    assert client.get(f"/api/assignments/{created_assign_id}", headers={"Authorization": f"Bearer {admin_token}"}).status_code == 404
+    assert client.get(f"/api/questions/{created_q_id}", headers={"Authorization": f"Bearer {admin_token}"}).status_code == 404
+    print("[PASS] Admin Cascade Delete (Subject -> Assignment -> Question): OK")
 
-    # Verify cascaded assignment is gone
-    check_assign = client.get(f"/api/assignments/{created_assign_id}", headers={"Authorization": f"Bearer {admin_token}"})
-    assert check_assign.status_code == 404
-    print("[PASS] Admin Cascade CRUD (Subject -> Assignment): OK")
-
-    # 10. Search API (Hierarchy: Subject -> Assignment -> Question)
-    search_res = client.get("/api/search?q=Explainable", headers={"Authorization": f"Bearer {user_token}"})
-    assert search_res.status_code == 200
-    results = search_res.json()["data"]
-    assert len(results) > 0
-    # Ensure no result includes unit
-    for item in results:
-        assert "unit" not in item
-        assert "unitId" not in item
-    print(f"[PASS] Search API: Found {len(results)} hierarchical results without units")
 
     print("\n========================================")
     print(" ALL 10 UNIT-FREE TESTS PASSED!         ")

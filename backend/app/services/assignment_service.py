@@ -69,10 +69,11 @@ class AssignmentService:
         if not doc_ref.get().exists:
             return False
 
-        # Cascade delete child questions
-        questions = db.collection("questions").where("assignmentId", "==", assignment_id).stream()
+        # Cascade delete child questions and their diagrams
+        from app.services.question_service import question_service
+        questions = question_service.get_all(assignment_id=assignment_id)
         for q in questions:
-            db.collection("questions").document(q.id).delete()
+            question_service.delete(q["id"])
 
         doc_ref.delete()
         return True
