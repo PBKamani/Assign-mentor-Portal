@@ -48,7 +48,7 @@ if settings.FRONTEND_URL and settings.FRONTEND_URL not in origins:
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
-    allow_origin_regex=r"https://.*\.github\.io",
+    allow_origin_regex=r"^https:\/\/[a-zA-Z0-9-]+\.github\.io$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -76,6 +76,11 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         status_code=422,
         content={"success": False, "message": "; ".join(error_msgs), "data": None}
     )
+
+@app.get("/health")
+async def health():
+    """Simple deployment platform health check endpoint (e.g. Render / Cloud Run)."""
+    return {"status": "healthy"}
 
 @app.get("/")
 async def root():
